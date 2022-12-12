@@ -87,3 +87,72 @@ class Falsy
     public function almostNull(): string|null {}
 }
 ?>
+
+<?php
+//Константы в трейтах
+
+trait Foo
+{
+    public const CONSTANT = 1;
+}
+
+class Bar
+{
+    use Foo;
+}
+
+var_dump(Bar::CONSTANT); //1
+var_dump(Foo::CONSTANT); //error
+//Нельзя получить доступ к константе через имя трейта, но можно через класс, который использует этот трейт. 
+
+?>
+
+<?php
+//Динамические свойства объявлены устаревшими
+
+class User
+{
+    public $name;
+}
+
+$user = new User();
+$user->last_name = 'Doe'; //Deprecated notice
+
+$user = new stdClass();
+$user->last_name = 'Doe' // Still allowed
+
+//было
+class User
+{
+    public $name;
+}
+
+$user = new User();
+$user->last_name = 'Doe';
+
+$user = new stdClass();
+$user->last_name = 'Doe'
+
+/**
+ * Чтобы помочь избежать ошибок и опечаток, больше не рекомендуется определять динамические свойства, 
+ * только если сам класс явно не разрешит это при помощи атрибута #[\AllowDynamicProperties]. 
+ * В экземплярах stdClass по-прежнему можно использовать динамические свойства.
+ * Это изменение не влияет на использование магических методов __get/__set.
+ */
+
+/**
+ * Новые функции, возможно не очень интересные
+ * curl_upkeep, 
+ * memory_reset_peak_usage, 
+ * ini_parse_quantity, 
+ * libxml_get_external_entity_loader, 
+ * sodium_crypto_stream_xchacha20_xor_ic, 
+ * openssl_cipher_key_length.
+
+ * Устаревшая функциональность и изменения в обратной совместимости
+ * Интерполяции строк вида ${} следует избегать.
+ * Не рекомендуется использовать функции utf8_encode и utf8_decode.
+ * При работе функции strtolower и strtoupper теперь не учитывают локаль.
+ */
+
+
