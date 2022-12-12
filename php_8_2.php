@@ -19,8 +19,6 @@ readonly class BlogData
 }
 
 //до этого readonly свойства были добавлены в php 8.1
-
-
 class BlogData
 {
     public readonly string $title;
@@ -40,4 +38,31 @@ class BlogData
 
     }
 }
+?>
+
+<?php
+/**
+ * Улучшенная система типов:
+ * теперь можно использовать null и false как самостоятельные типы
+ * добавлен тип true
+ * Теперь можно комбинировать пересечение и объединение типов. Тип должен быть записан в виде ДНФ - дизъюнктивной нормальной формы
+ */
+
+ class Foo {
+    public function bar((A&B)|null $entity) {
+        return $entity;
+    }
+ }
+ //ДНФ позволяет совместить объединение и пересечение типов, при этом обязательно типы пересечения следует сгруппировать скобками. 
+
+ //было
+ class Foo {
+    public function bar(mixed $entity) {
+        if ((($entity instanceof A) && ($entity instanceof B)) || ($entity === null)) {
+            return $entity;
+        }
+
+        throw new Exception('Invalid entity');
+    }
+ }
 ?>
