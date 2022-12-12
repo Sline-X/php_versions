@@ -66,3 +66,24 @@ class BlogData
     }
  }
 ?>
+
+<?php
+//Самостоятельные типы null, false и true
+class Falsy
+{
+    public function alwaysFalse(): false {}
+
+    public function alwaysTrue(): true {}
+
+    public function alwaysNull(): null {}
+}
+
+//было class Falsy
+{
+    public function almostFalse(): bool {}
+
+    public function almostTrue(): bool {}
+
+    public function almostNull(): string|null {}
+}
+?>
