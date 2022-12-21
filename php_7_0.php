@@ -39,3 +39,30 @@ echo User['name'];
 
 
 //анонимные классы
+var_dump(new class(10) {
+    private $num;
+
+    public function __construct($num)
+    {
+        $this->num = $num;
+    }
+
+});
+
+//Синтаксис кодирования Unicode
+echo "\u{004D}";
+echo "\u{0061}";
+echo "\u{006B}";
+echo "\u{0073}";
+
+//десериализация с фильтрацией, даёт более высокий уровень безопасности 
+//unserialize
+
+// Преобразование всех объектов в __PHP_Incomplete_Class
+$data = unserialize($foo, ["allowed_classes" => false]);
+
+// Преобразование всех объектов, кроме MyClass и MyClass2 в __PHP_Incomplete_Class
+$data = unserialize($foo, ["allowed_classes" => ["MyClass", "MyClass2"]]);
+
+// Поведение по умолчанию принимает все классы (можно просто не задавать второй аргумент)
+$data = unserialize($foo, ["allowed_classes" => true]);
