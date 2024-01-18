@@ -90,3 +90,37 @@ final class MyTest extends TestCase {
 // Добавление атрибута даёт понять, что переопределение родительскогометода является
 // намеренным, а также упрощает рефакторинг, поскольку удаление переопределённого
 // родительского метода будет обнаружено.
+
+
+//Глубокое клонирование readonly-свойств
+
+//было
+class PHP
+{
+    public string $version = '8.2';
+}
+
+readonly class Foo
+{
+    public function __construct(
+        public PHP $php
+    ) {
+    }
+    
+    public function __clone(): void
+    {
+        $this->php = clone $this->php;
+    }
+}
+
+$instance = new Foo(new PHP());
+$cloned   = clone $instance;
+//Fatal error: cannot modify readonly property Foo::$php
+
+//стало
+//... тот же класс Foo и PHP
+$cloned->php->version = '8.3';
+
+//Свойства, доступные только для чтения (readonly) теперь могут быть
+// изменены один раз с помощью магического метода __clone для обеспечения
+// возможности глубокого клонирования readonly-свойств.
