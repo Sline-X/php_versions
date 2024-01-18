@@ -124,3 +124,23 @@ $cloned->php->version = '8.3';
 //Свойства, доступные только для чтения (readonly) теперь могут быть
 // изменены один раз с помощью магического метода __clone для обеспечения
 // возможности глубокого клонирования readonly-свойств.
+
+
+//Новая функция json_validate()
+
+//было
+//самописная функция
+function json_validate(string $string): bool {
+    json_decode($string);
+    
+    return json_last_error() === JSON_ERROR_NONE;
+}
+
+var_dump(json_validate('{ "test": { "foo": "bar"} }')); //true
+
+//стало
+//встроенная в язык функция
+var_dump(json_validate('{ "test": { "foo": "bar" } }')); // true
+
+// Функция json_validate() позволяет проверить, является ли строка синтаксически
+// корректным JSON, при этом она более эффективна, чем функция json_decode().
