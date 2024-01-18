@@ -2,7 +2,7 @@
 
 //Типизированные константы классов
 
-//было
+//PHP < 8.3
 interface I {
     //we may naively assume that the PHP constant is always a string.
     const PHP = '8.2';
@@ -13,7 +13,7 @@ class Foo implements I {
     const PHP = [];
 }
 
-//стало
+//PHP 8.3
 interface I {
     const string PHP = 'PHP 8.3';
 }
@@ -27,7 +27,7 @@ class Foo implements I {
 
 //Динамическое получение констант класса
 
-//было
+//PHP < 8.3
 class Foo {
     const PHP = 'PHP 8.2';
 }
@@ -36,7 +36,7 @@ $searchableConstant = 'PHP';
 
 var_dump(constant(FOO::class . "::{$searchableConstant}"));
 
-//стало
+//PHP 8.3
 class Foo {
     const PHP = 'PHP 8.3';
 }
@@ -48,7 +48,7 @@ var_dump(Foo::{$searchableConstant});
 
 //Новый атрибут #[\Override]
 
-//было
+//PHP < 8.3
 use PHPUnit\Framework\TestCase;
 
 final class MyTest extends TestCase {
@@ -66,7 +66,7 @@ final class MyTest extends TestCase {
 // The log file will never be removed, because the
 // method name waw mistyped (taerDown vs tearDown)
 
-//стало
+//PHP 8.3
 use PHPUnit\Framework\TestCase;
 
 final class MyTest extends TestCase {
@@ -94,7 +94,7 @@ final class MyTest extends TestCase {
 
 //Глубокое клонирование readonly-свойств
 
-//было
+//PHP < 8.3
 class PHP
 {
     public string $version = '8.2';
@@ -117,7 +117,7 @@ $instance = new Foo(new PHP());
 $cloned   = clone $instance;
 //Fatal error: cannot modify readonly property Foo::$php
 
-//стало
+//PHP 8.3
 //... тот же класс Foo и PHP
 $cloned->php->version = '8.3';
 
@@ -128,7 +128,7 @@ $cloned->php->version = '8.3';
 
 //Новая функция json_validate()
 
-//было
+//PHP < 8.3
 //самописная функция
 function json_validate(string $string): bool {
     json_decode($string);
@@ -138,9 +138,55 @@ function json_validate(string $string): bool {
 
 var_dump(json_validate('{ "test": { "foo": "bar"} }')); //true
 
-//стало
+//PHP 8.3
 //встроенная в язык функция
 var_dump(json_validate('{ "test": { "foo": "bar" } }')); // true
 
 // Функция json_validate() позволяет проверить, является ли строка синтаксически
 // корректным JSON, при этом она более эффективна, чем функция json_decode().
+
+
+//Новый метод Randomizer::getBytesFromString()
+
+//PHP < 8.3
+//This function needs to be manually implemented
+function getBytesFromString(string $string, int $length) {
+    $stringLength = strlen($string);
+    
+    $result = '';
+    for ($i = 0, $i < $length, $i++) {
+        // random_int is not seedable for testing, but secure.
+        $result .= $string[random_int(0, $stringLength -1)];
+    }
+    
+    return $result;
+}
+
+$randomDomain = sprintf(
+    "%s.example.com",
+    getBytesFromString(
+        'abcdefghijklmnopqrstuvwxyz0123456789',
+        16,
+    ),
+);
+
+echo $randomDomain;
+
+//PHP 8.3
+//A \Random\Engine may be passed for seeding,
+// the default is the secure engine.
+$randomizer = new \Random\Randomizer();
+
+$randomDomain = sprintf(
+    "%s.example.com",
+    $randomizer->getBytesFromString(
+        'abcdefghijklmnopqrstuvwxyz0123456789',
+        16,
+    ),
+);
+
+echo $randomDomain;
+
+// Модуль Random, добавленный в PHP 8.2, был дополнен новым методом генерации случайных
+// строк, состоящих только из определённых байтов. Этот метод позволяет легко генерировать
+// случайные идентификаторы, например, имена доменов и числовые строки произвольной длины.
