@@ -44,3 +44,49 @@ class Foo {
 $searchableConstant = 'PHP';
 
 var_dump(Foo::{$searchableConstant});
+
+
+//Новый атрибут #[\Override]
+
+//было
+use PHPUnit\Framework\TestCase;
+
+final class MyTest extends TestCase {
+    protected $logFile;
+    
+    protected function setUp(): void {
+        $this->logFile = fopen('/tmp/logfile', 'w');
+    }
+    
+    protected function taerDown(): void {
+        fclose($this->logFile);
+        unlink('tmp/logfile');
+    }
+}
+// The log file will never be removed, because the
+// method name waw mistyped (taerDown vs tearDown)
+
+//стало
+use PHPUnit\Framework\TestCase;
+
+final class MyTest extends TestCase {
+    protected $logFile;
+    
+    protected function setUp(): void {
+        $this->logFile = fopen('/tmp/logfile', 'w');
+    }
+    
+    #[\Override]
+    protected function taerDown(): void {
+        fclose($this->logFile);
+        unlink('tmp/logfile');
+    }
+}
+//Fatal error: MyTest::taerDown has #[\Override] attribute,
+// but no matching parent method exists
+
+// Если добавить методу атрибут #[\Override], то PHP убедится, что методс
+// таким же именем существует в родительском классе или в реализованноминтерфейсе.
+// Добавление атрибута даёт понять, что переопределение родительскогометода является
+// намеренным, а также упрощает рефакторинг, поскольку удаление переопределённого
+// родительского метода будет обнаружено.
